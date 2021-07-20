@@ -10,7 +10,7 @@ from datetime import datetime
 from dateutil import relativedelta
 import constants as cs
 from spacy.matcher import Matcher
-from pdfminer.converter import TextConverter
+from pdfminer.converter import TextConverter 
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.layout import LAParams
@@ -19,7 +19,7 @@ from pdfminer.pdfparser import PDFSyntaxError
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import spacy
-from fuzzywuzzy import fuzz 
+from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from tabula import read_pdf
 from dateutil.parser import parse
@@ -36,7 +36,7 @@ def is_date(string, fuzzy=False):
     """
     Return whether the string can be interpreted as a date.
     """
-    try: 
+    try:
         parse(string, fuzzy=fuzzy)
         return True
 
@@ -76,7 +76,7 @@ def extract_text_from_pdf(pdf_path):
         # extract text from local pdf file
         with open(pdf_path, 'rb') as fh:
             try:
-                for page in PDFPage.get_pages(fh, 
+                for page in PDFPage.get_pages(fh,
                                             caching=True,
                                             check_extractable=True):
                     resource_manager = PDFResourceManager()
@@ -84,10 +84,10 @@ def extract_text_from_pdf(pdf_path):
                     converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
                     page_interpreter = PDFPageInterpreter(resource_manager, converter)
                     page_interpreter.process_page(page)
-        
+
                     text = fake_file_handle.getvalue()
                     yield text
-        
+
                     # close open handles
                     converter.close()
                     fake_file_handle.close()
@@ -96,7 +96,7 @@ def extract_text_from_pdf(pdf_path):
     else:
         # extract text from remote pdf file
         try:
-            for page in PDFPage.get_pages(pdf_path, 
+            for page in PDFPage.get_pages(pdf_path,
                                             caching=True,
                                             check_extractable=True):
                 resource_manager = PDFResourceManager()
@@ -104,10 +104,10 @@ def extract_text_from_pdf(pdf_path):
                 converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
                 page_interpreter = PDFPageInterpreter(resource_manager, converter)
                 page_interpreter.process_page(page)
-    
+
                 text = fake_file_handle.getvalue()
                 yield text
-    
+
                 # close open handles
                 converter.close()
                 fake_file_handle.close()
@@ -120,7 +120,7 @@ def get_number_of_pages(file_name):
         if isinstance(file_name, io.BytesIO):
             # for remote pdf file
             count = 0
-            for page in PDFPage.get_pages(file_name, 
+            for page in PDFPage.get_pages(file_name,
                                         caching=True,
                                         check_extractable=True):
                     count += 1
@@ -130,7 +130,7 @@ def get_number_of_pages(file_name):
             if file_name.endswith('.pdf'):
                 count = 0
                 with open(file_name, 'rb') as fh:
-                    for page in PDFPage.get_pages(fh, 
+                    for page in PDFPage.get_pages(fh,
                                                 caching=True,
                                                 check_extractable=True):
                         count += 1
@@ -182,7 +182,7 @@ def extract_text(file_path, extension):
 
 def extract_entity_sections_grad(text):
     '''
-    Helper function to extract all the raw text from sections of resume specifically for 
+    Helper function to extract all the raw text from sections of resume specifically for
     graduates and undergraduates
     '''
     text_split = [i.strip() for i in text.split('\n')]
@@ -204,7 +204,7 @@ def extract_entity_sections_grad(text):
             key = p_key
         elif key and phrase.strip():
             entities[key].append(phrase)
-    
+
     return entities
 
 def get_total_experience(experience_list):
@@ -228,13 +228,13 @@ def get_number_of_months_from_dates(date1, date2):
     try:
         if len(date1.split()[0]) > 3:
             date1 = date1.split()
-            date1 = date1[0][:3] + ' ' + date1[1] 
+            date1 = date1[0][:3] + ' ' + date1[1]
         if len(date2.split()[0]) > 3:
             date2 = date2.split()
             date2 = date2[0][:3] + ' ' + date2[1]
     except IndexError:
         return 0
-    try: 
+    try:
         date1 = datetime.strptime(str(date1), '%b %Y')
         date2 = datetime.strptime(str(date2), '%b %Y')
         months_of_experience = relativedelta.relativedelta(date2, date1)
@@ -245,7 +245,7 @@ def get_number_of_months_from_dates(date1, date2):
 
 def extract_entity_sections_professional(text):
     '''
-    Helper function to extract all the raw text from sections of resume specifically for 
+    Helper function to extract all the raw text from sections of resume specifically for
     professionals
     '''
     text_split = [i.strip() for i in text.split('\n')]
@@ -283,7 +283,7 @@ def show_tokens(text):
     cv_tokens_list.clear()
     for token in text:
         cv_tokens_list.append(token.text)
-    
+
     return cv_tokens_list
 
 def show_tokens_nlp(text):
@@ -298,12 +298,12 @@ def show_ents(text):
     if text.ents:
         for ent in text.ents:
             #print(ent.text,' - ',ent.label_,' - ',spacy.explain(ent.label_))
-            cv_entity_list.append(ent.text)       
+            cv_entity_list.append(ent.text)
     else:
         print('No Entities found')
 
     #print('All entities : ')
-    #print(cv_entity_list)  
+    #print(cv_entity_list)
     return cv_entity_list
 
 def show_ents_date(text):
@@ -312,10 +312,10 @@ def show_ents_date(text):
         for ent in text.ents:
             if ent.label_=='DATE':
                 cv_date_list.append(ent.text)
-            
+
     else:
         print('No Date Entities found')
-        
+
     return cv_date_list
 
 def show_noun_chunks(text):
@@ -334,27 +334,27 @@ def extract_name(nlp_text, matcher):
     final_name=' '
     name_catch_token=[]
     pattern = [cs.NAME_PATTERN]
-    
+
     matcher.add('NAME', None, *pattern)
     # print(nlp_text)
     matches = matcher(nlp_text)
     # print(matches)
     name_catch_token.clear()
     name_catch_token=show_tokens(nlp_text)
-  
+
 
     for i in range(len(name_catch_token)):
         if name_catch_token[i].lower() in indianNames:
             final_name=name_catch_token[i]+' '+name_catch_token[i+1]
             if name_catch_token[i+2].lower() in indianNames:
-                final_name=final_name+' '+name_catch_token[i+2]     #for taking third name 
+                final_name=final_name+' '+name_catch_token[i+2]     #for taking third name
             break
         else:
             final_name='NA'
-            
+
     # print(final_name)
     # get_first_name(final_name,nlp_text)
-        
+
     return final_name
 
 def get_first_name(full_name,nlp_text):
@@ -398,12 +398,12 @@ def get_father_name(nlp_text):
 
     father_name=' '
     name_catch_token=[]
-   
+
     name_catch_token.clear()
     name_catch_token=show_tokens(nlp_text)
     count_j=0
     count_token=len(name_catch_token)-1
-  
+
 
     for i in range(len(name_catch_token)):
         # print('out : ',name_catch_token[i])
@@ -421,11 +421,11 @@ def get_father_name(nlp_text):
                     break
 
         if count_j==1 or father_name!=' ':
-            break                    
-            
+            break
+
     if father_name==' ':
         father_name='NA'
-    
+
 
     return father_name
 
@@ -433,7 +433,7 @@ def get_gender(text):
     gender=' '
     similar_percent_gender=0
     similar_percent_sex=0
-    
+
     check_gender=show_tokens(text)
     try:
         for i in range(len(check_gender)):
@@ -459,10 +459,10 @@ def get_gender(text):
 def get_nationality(text):
     nationality=' '
     similar_percent_nationality=0
-    
+
     check_nationality=show_tokens(text)
     try:
-    
+
         for i in range(len(check_nationality)):
             similar_percent_nationality=fuzz.ratio(check_nationality[i].lower().strip(), 'nationality')
             if similar_percent_nationality>=90:
@@ -470,7 +470,7 @@ def get_nationality(text):
                    if check_nationality[j].lower()=='indian':
                         nationality='Indian'
                         break
-            
+
         if nationality==' ':
             nationality='NA'
     except:
@@ -487,7 +487,7 @@ def get_maritial_status(text):
     check_status=show_tokens(text)
     check_tokens=len(check_status)-1
     try:
-        
+
         for i in range(len(check_status)):
             similar_percent_marital_1=fuzz.ratio(check_status[i].lower().strip(), 'marital')
             similar_percent_marital_2=fuzz.ratio(check_status[i].lower().strip(), 'maritalstatus')
@@ -504,9 +504,9 @@ def get_maritial_status(text):
         if marital_status==' ' or count_j==1:
             marital_status='NA'
     except:
-        
+
         marital_status='Check karo'
-        
+
     #print(f'Maritial Status : {maritial_status}')
     return marital_status
 
@@ -528,7 +528,7 @@ def extract_language(nlp_text, noun_chunks, language_file=None):
     check_token=len(check_language)-1
     count_j=0
     try:
-        
+
         for i in range(len(check_language)):
             similar_percent_language=fuzz.ratio(check_language[i].lower().strip(), 'languages')
             if similar_percent_language>=90:
@@ -543,8 +543,8 @@ def extract_language(nlp_text, noun_chunks, language_file=None):
             if len(languages_set)>0 or count_j==1:
                 break
     except:
-        
-       languages_set.append('Check karo') 
+
+       languages_set.append('Check karo')
 
     #print(languages_set)
 
@@ -583,13 +583,13 @@ def extract_hobbies(nlp_text, noun_chunks, hobbies_file=None):
                         count_j=count_j+1
                         break
 
-                
+
 
             if len(hobbies_set)>0 or count_j==1:
                 break
     except:
-        
-       hobbies_set.append('Check karo') 
+
+       hobbies_set.append('Check karo')
 
     #print(hobbies_set)
 
@@ -625,7 +625,7 @@ def extract_date_of_birth(nlp_text, text):
             # print(tokens_list[i].lower())
             if tokens_list[i].lower()=='birth' or tokens_list[i].lower()=='dob' or tokens_list[i].lower()=='d.o.b' or tokens_list[i].lower()=='d.o.b.':
                 index_value=i
-                # print(tokens_list[i].lower())   
+                # print(tokens_list[i].lower())
                 for j in range(i+1,i+10):
                     for l in range(len(dob_ents)):
                         ent_break.clear()
@@ -665,7 +665,7 @@ def extract_date_of_birth(nlp_text, text):
                         else:
                             final_dob=final_dob+tokens_list[j]+' '
                             break
-                        
+
                 if final_dob!=' ':
                     break
 
@@ -673,7 +673,7 @@ def extract_date_of_birth(nlp_text, text):
             final_dob='NA'
 
     except:
-         
+
         final_dob='Check karo'
     # print(f'Date of Birth : {final_dob}')
 
@@ -681,16 +681,16 @@ def extract_date_of_birth(nlp_text, text):
 
     return final_dob
 
-def unique(list1): 
-  
-    # intilize a null list 
-    unique_list = [] 
-      
-    # traverse for all elements 
-    for x in list1: 
-        # check if exists in unique_list or not 
-        if x not in unique_list: 
-            unique_list.append(x) 
+def unique(list1):
+
+    # intilize a null list
+    unique_list = []
+
+    # traverse for all elements
+    for x in list1:
+        # check if exists in unique_list or not
+        if x not in unique_list:
+            unique_list.append(x)
 
     return unique_list
 
@@ -710,43 +710,43 @@ def extract_no_of_companies_worked_for(nlp_text, noun_chunks, hobbies_file=None)
             for j in range(len(companies)):
                 # print(companies[j])
                 similar_percent=fuzz.ratio(check_companies[i].lower().strip(), companies[j].strip())
-                
+
                 print('Resume:',check_companies[i].lower().strip())
                 print('Excel:',companies[j].strip())
                 print(similar_percent)
-                
+
                 if similar_percent>=80:
-                    
+
                     print('Resume:',check_companies[i].lower().strip())
                     print('Excel:',companies[j].strip())
                     print('similarity:',similar_percent)
-                    
+
                     companies_set.append(check_companies[i])
 
     for i in range(len(check_companies_token)):
         for j in range(len(companies)):
             similar_percent=fuzz.ratio(check_companies_token[i].lower().strip(), companies[j].strip())
-            
+
             print('Resume:',check_companies[i].lower().strip())
             print('Excel:',companies[j].strip())
             print(similar_percent)
-            
+
             if similar_percent>=100:
-                
+
                 print('Resume:',check_companies[i].lower().strip())
                 print('Excel:',companies[j].strip())
                 print('similarity:',similar_percent)
-                
+
                 companies_set.append(check_companies_token[i])
-                    
-                   
+
+
     # print(unique(companies_set))
     # print(len(companies_set))
-    
+
     print(companies_set)
     return len(unique(companies_set))
-    '''    
-    return '0'                                     
+    '''
+    return '0'
     '''
     print(f'Hobbies : {[i.capitalize() for i in set([i.lower() for i in companies_set])]}')
     return [i.capitalize() for i in set([i.lower() for i in companies_set])]
@@ -810,7 +810,7 @@ def extract_address(nlp_text, noun_chunks):
                                 count_c=count_c+1
                                 break
 
-                            
+
                     elif address!=' ':
                         break
 
@@ -821,8 +821,8 @@ def extract_address(nlp_text, noun_chunks):
                 if address!=' ':
                     break
                 elif count_b==1 or count_c==1:
-                    break           
-                    
+                    break
+
         if address==' ':
             for i in range(len(tokens)):
                 similar_percent_address=fuzz.ratio(tokens[i].lower().strip(), 'address')
@@ -832,25 +832,25 @@ def extract_address(nlp_text, noun_chunks):
                         # print(tokens[j].lower().strip())
                         if tokens[j].lower() in cities_list:
                             # print(tokens[j].lower().strip())
-                            for k in range(i+2, i+20): 
+                            for k in range(i+2, i+20):
                                 if tokens[k].lower() not in cities_list and tokens[k].lower() not in states_list:
                                     address=address+tokens[k]+' '
                                 else:
                                     break
-                                
+
                                 if k>=count_token:
                                     count_k=count_k+1
                                     break
-                            
+
 
                         if j>=count_token:
                             count_j=count_j+1
                             break
-                        
-                        
 
-            
-                        
+
+
+
+
                     if address!=' ':
                         break
                     elif count_k==1:
@@ -862,7 +862,7 @@ def extract_address(nlp_text, noun_chunks):
             address='NA'
     except:
         address='Check karo'
-            
+
     return address
 
 def extract_pin_exceptional(nlp_text, noun_chunks,found_pins):
@@ -876,7 +876,7 @@ def extract_pin_exceptional(nlp_text, noun_chunks,found_pins):
     pincode=' '
     similar_percent_pincode = 0
     count_token=len(tokens)-1
-    
+
     # print('found pincodes: '+str(found_pins))
     try:
 
@@ -892,7 +892,7 @@ def extract_pin_exceptional(nlp_text, noun_chunks,found_pins):
                             pincode=found_pins[k]
                             count=count+1
                             break
-            
+
                     if count==1:
                         break
                     elif j>=count_token:
@@ -904,12 +904,12 @@ def extract_pin_exceptional(nlp_text, noun_chunks,found_pins):
     except:
 
         pincode='Check karo'
-            
+
     #return [i.capitalize() for i in set([i.lower() for i in pin_set])]
     return pincode
 
 def extract_cities_exceptional(nlp_text, noun_chunks,found_cities):
-    
+
     tokens = [token.text for token in nlp_text if not token.is_stop]
     city_set = []
     city_count = 0
@@ -928,13 +928,13 @@ def extract_cities_exceptional(nlp_text, noun_chunks,found_cities):
             except:
                 break
             j += 1
-            
+
             if count == 15:
                 city_count += 1
                 count = 0
                 j = 1
-    return [i.capitalize() for i in set([i.lower() for i in city_set])]        
-    
+    return [i.capitalize() for i in set([i.lower() for i in city_set])]
+
 
 def extract_cities(nlp_text, noun_chunks):
     tokens = [token.text for token in nlp_text if not token.is_stop]
@@ -949,7 +949,7 @@ def extract_cities(nlp_text, noun_chunks):
     check_token=0
 
     try:
-        
+
         for i in range(len(tokens)):
             if tokens[i].lower() in indianNames:
                 if check_token==0:
@@ -970,8 +970,8 @@ def extract_cities(nlp_text, noun_chunks):
                             break
                 else:
                     break
-                   
-        if city_name==' ':   
+
+        if city_name==' ':
             for i in range(len(tokens)):
                 similar_percent_cities=fuzz.ratio(tokens[i].lower().strip(), 'address')
                 if similar_percent_cities>=90:
@@ -988,7 +988,7 @@ def extract_cities(nlp_text, noun_chunks):
                                 #print(city_name)
                                 count=count+1
                                 break
-                
+
                         if count==1:
                             break
                         elif j>=count_token:
@@ -1002,9 +1002,9 @@ def extract_cities(nlp_text, noun_chunks):
 
     except:
         city_name='Check karo'
-            
+
     return city_name
-        
+
 def extract_state(nlp_text, noun_chunks):
     tokens = [token.text for token in nlp_text if not token.is_stop]
     data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'states.csv'), encoding = 'unicode_escape')
@@ -1017,7 +1017,7 @@ def extract_state(nlp_text, noun_chunks):
     check_token=0
 
     try:
-        
+
         for i in range(len(tokens)):
             if tokens[i].lower() in indianNames:
                 # print('Indianname ',tokens[i])
@@ -1038,7 +1038,7 @@ def extract_state(nlp_text, noun_chunks):
                             break
                 else:
                     break
-            
+
 
         if state_name==' ':
             for i in range(len(tokens)):
@@ -1085,37 +1085,37 @@ def extract_state(nlp_text, noun_chunks):
             state_name='NA'
 
     except:
-        
+
         state_name='Check karo'
-            
+
     return state_name
-    
+
 
 def extract_pin(nlp_text, noun_chunks):
     tokens = [token.text for token in nlp_text if not token.is_stop]
     data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'pincodes.csv'), encoding = 'unicode_escape')
     pincodes = list(data.columns.values)
     pin_set = []
-        
+
 
     for  i in range(0,len(tokens)-1):
         for j in range(0,len(pincodes)-1):
             if pincodes[j] in tokens[i].lower().strip():
                 pin_set.append(pincodes[j])
 
-    '''    
+    '''
     for i in range(0,len(noun_chunks)-1):
         for j in range(0,len(pincodes)-1):
             if pincodes[j] in noun_chunks[i]:
                  pin_set.append(noun_chunks[i])
-            
+
             noun_chunks[i] = noun_chunks[i].text.lower().strip()
             if noun_chunks[i] in pincodes:
                 pin_set.append(noun_chunks[i])
     '''
     #print('ye bhi address hai'+str(address_set))
     return [i.capitalize() for i in set([i.lower() for i in pin_set])]
-    
+
 def extract_skills(nlp_text, noun_chunks):
     '''
     Helper function to extract skills from spacy nlp text
@@ -1125,14 +1125,14 @@ def extract_skills(nlp_text, noun_chunks):
     :return: list of skills extracted
     '''
     tokens = [token.text for token in nlp_text if not token.is_stop]
-    data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'skills.csv'), encoding = 'unicode_escape') 
+    data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'skills.csv'), encoding = 'unicode_escape')
     skills = list(data.columns.values)
     skillset = []
     # check for one-grams
     for token in tokens:
         if token.lower() in skills:
             skillset.append(token)
-    
+
     # check for bi-grams and tri-grams
     for token in noun_chunks:
         token = token.text.lower().strip()
@@ -1162,7 +1162,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
     deg = []
     temp_deg = temp_year = temp_marks = ''
     tokens = [token.text for token in nlp_text1]
-    data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'degrees.csv'),encoding = 'unicode_escape') 
+    data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'degrees.csv'),encoding = 'unicode_escape')
     degrees = list(data.columns.values)
 
 
@@ -1180,14 +1180,14 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                         spltted = tokens[i+count].split(',')
                         edu.append(spltted[0])
                         edu.append(spltted[1])
-                        
+
                     edu.append(tokens[i+count])
                     count += 1
                 except:
                     break
 
         #print(edu)
-        
+
         try:
             df = read_pdf(resume)
             if df == None:
@@ -1203,7 +1203,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
             df = read_pdf(resume)
             #print(df)
 
-            
+
         cols = list(df.columns.values)
         flag = 0
         for i in range(len(cols)):
@@ -1212,7 +1212,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
             if 'year' in cols[i]:
                 flag = 1
             # print(cols[i])
-        
+
         if not df.empty and df.shape[1]>=3 and flag == 1 :
             #print(df)
             cols = list(df.columns.values)
@@ -1228,29 +1228,29 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
             for i in range(0,len(years)):
                 if len(str(years[i])) > 4:
                     years[i] = years[i][-4:]
-            
+
 
             deg_col = ''
             for i in range(0,len(cols)):
                 if 'educ' in cols[i].lower().strip() or 'qualifi' in cols[i].lower().strip() or 'degree' in cols[i].lower().strip() or 'course' in cols[i].lower().strip() or 'exam' in cols[i].lower().strip():
                     deg_col = cols[i]
                     break
-            if deg_col != '':     
+            if deg_col != '':
                 true_edu = list(df[deg_col])
             else:
                 true_edu = []
-            
+
 
             mark_col = ''
             for i in range(0,len(cols)):
                 if 'mark' in cols[i].lower().strip() or 'percent' in cols[i].lower().strip() or 'score' in cols[i].lower().strip():
                     mark_col = cols[i]
                     break
-            if mark_col != '':     
+            if mark_col != '':
                 marks = list(df[mark_col])
             else:
                 marks = []
-            
+
             uni_col = ''
             for i in range(0,len(cols)):
                 if 'uni' in cols[i].lower().strip() or 'board' in cols[i].lower().strip() or 'insti' in cols[i].lower().strip():
@@ -1261,14 +1261,14 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
             else:
                 uni = []
 
-            
+
             for i in range(0,len(years)):
                 for j in range(0,len(years)):
                     #print(j)
-                    years[j] = re.sub(r'[?|$|.|!|,|-]', r'', str(years[j]))    
+                    years[j] = re.sub(r'[?|$|.|!|,|-]', r'', str(years[j]))
                     try:
                         if not str(years[j]).isdigit() and not is_date(years[j]):
-                            
+
                             del years[j]
                             del marks[j]
                             del true_edu[j]
@@ -1276,13 +1276,13 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                             break
                     except:
                         break
-                
+
             final_edu = []
             final_edu.append([true_edu,years,marks,uni])
             # print(final_edu)
-            
+
         else:
-            
+
             count = 0
             true_deg = []
             edu_count = 0
@@ -1290,7 +1290,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                 true_edu = edu[i].lower().strip()
                 education = edu[i].lower().strip()
                 for j in range(0,5):
-                    
+
                     try:
                         education = re.sub(r"[?|$|.|!|,|']", r'', education)
                         if education in degrees:
@@ -1312,7 +1312,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                             true_edu = true_edu + ' ' + edu[i+j+1].lower().strip()
                     except:
                         break
-            
+
             for i in range(0,len(true_deg)):
                 if true_deg[i] == 'cbse':
                     edu_count += 1
@@ -1320,10 +1320,10 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
             if edu_count < 2 and ('ssc' in edu or 's.s.c'  in edu or 's.s.c.'  in edu or 'SSC'  in edu or 'S.S.C'  in edu or 'S.S.C.'  in edu):
                 true_deg.append('ssc')
                 deg.append('ssc')
-            
+
             # print(true_deg)
             del_item = []
-                      
+
 
             years = []
             for i in range(0,len(edu)):
@@ -1331,27 +1331,27 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                 year = year.replace('|','')
                 #print(year)
                 if i+2 < len(edu):
-                    if str(edu[i+1].lower().strip()) == '-' and re.match(r'(((20|19)(\d{2})))', str(edu[i+2].lower().strip())):               
+                    if str(edu[i+1].lower().strip()) == '-' and re.match(r'(((20|19)(\d{2})))', str(edu[i+2].lower().strip())):
                         year = 'galat h mat kar'
                         print('nhi hua')
                     elif '-' in str(edu[i+1].lower().strip()):
                         year = 'galat h mat kar'
-                        
+
                 # print(year)
-                      
+
                 if is_date(year) and not re.match(r'^\d{0,2}(\.\d{1,4})? *?$', str(year)):
                     if hasNumbers(year):
                         year = parser.parse(year).year
                     if re.match(r'(((20|19)(\d{2})))', str(year)):
                         years.append(year)
 
-                
+
             for i in range(len(years)):
                 if str(years[i]) in dob:
                     del years[i]
 
-         
-                    
+
+
             # print(years)
 
             marks = []
@@ -1363,14 +1363,14 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                     else:
                         print('wrong')
 
-            
+
             marks = ' '.join(marks).split()
             if len(years) >= 1:
                 del marks[len(years):]
             elif len(deg) >= 1:
                 del marks[len(deg):]
             marks = rem_dup(marks)
-            
+
             for i in range(0,len(marks)):
                 try:
                     if float(marks[i]) > 10 and float(marks[i]) < 35:
@@ -1378,7 +1378,7 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
                 except:
                     print('distinction waala h')
 
-        
+
             final_edu = []
             final_edu.append([true_deg,years,marks])
 
@@ -1386,10 +1386,10 @@ def extract_education(nlp_text,nlp_text1,resume,dob):
     except:
         final_edu = []
         final_edu.append('Check karo')
-    
+
     return final_edu
-    
-    
+
+
 def extract_experience_exceptional(nlp_text, noun_chunks):
     tokens = [token.text for token in nlp_text if not token.is_stop]
     exp_set = []
@@ -1408,36 +1408,36 @@ def extract_experience_exceptional(nlp_text, noun_chunks):
 
             count += 1
             try:
-               
+
                 '''
                 if tokens[i+j].lower().strip() in cs.MONTH:
                     months.append(tokens[i+j])
                     flag += 1
                 if tokens[i+j].lower().strip() in cs.YEAR:
-                    years.append(tokens[i+j]) 
+                    years.append(tokens[i+j])
                     flag += 1
                 if tokens[i+j].lower().strip() in cs.DATES:
-                    dates_1.append(tokens[i+j]) 
+                    dates_1.append(tokens[i+j])
                     flag += 1
                 '''
                 if 'years' in tokens[i+j].lower().strip():
                     years.append(tokens[i+j-1])
                 if 'months' in tokens[i+j].lower().strip():
                     months.append(tokens[i+j-1])
-            
+
                 j += 1
             except:
                 break
 
-    
+
     years_exp =0
     for i in range(0,len(years)):
         years_exp = years_exp + int(years[i])
-    months_exp =0           
+    months_exp =0
     for i in range(0,len(months)):
         months_exp = months_exp + int(months[i])
     # print("Experience : "+str(years_exp)+'Years '+str(months_exp)+'Months')
-    return# [i.capitalize() for i in set([i.lower() for i in dates])]        
+    return# [i.capitalize() for i in set([i.lower() for i in dates])]
 
 def extract_experience(resume_text):
     '''
@@ -1449,22 +1449,22 @@ def extract_experience(resume_text):
     wordnet_lemmatizer = WordNetLemmatizer()
     stop_words = set(stopwords.words('english'))
 
-    # word tokenization 
+    # word tokenization
     word_tokens = nltk.word_tokenize(resume_text)
 
-    # remove stop words and lemmatize  
-    filtered_sentence = [w for w in word_tokens if not w in stop_words and wordnet_lemmatizer.lemmatize(w) not in stop_words] 
+    # remove stop words and lemmatize
+    filtered_sentence = [w for w in word_tokens if not w in stop_words and wordnet_lemmatizer.lemmatize(w) not in stop_words]
     sent = nltk.pos_tag(filtered_sentence)
 
     # parse regex
     cp = nltk.RegexpParser('P: {<NNP>+}')
     cs = cp.parse(sent)
-    
+
     # for i in cs.subtrees(filter=lambda x: x.label() == 'P'):
     #     print(i)
-    
+
     test = []
-    
+
     for vp in list(cs.subtrees(filter=lambda x: x.label()=='P')):
         test.append(" ".join([i[0] for i in vp.leaves() if len(vp.leaves()) >= 2]))
 
@@ -1506,7 +1506,7 @@ def extract_competencies(text, experience_list):
                         matches[item] = [match.group(0)]
                     else:
                         for i in match.groups():
-                            matches[item].append(i)    
+                            matches[item].append(i)
                     competency_dict[competency] = matches
                 else:
                     match = re.search(r'([^.|,]*' + item + '[^.|,]*)', experience_text)
@@ -1517,7 +1517,7 @@ def extract_competencies(text, experience_list):
                             matches[item].append(i)
                     competency_dict[competency] = matches
                 score += get_score(competency_dict[competency]) * percentage
-            
+
     competency_dict['score'] = score
     return competency_dict
 
@@ -1548,7 +1548,7 @@ def extract_measurable_results(text, experience_list):
                     else:
                         for i in match.groups():
                             if i not in matches[item]:
-                                matches[item].append(i) 
+                                matches[item].append(i)
                     mr_dict[mr] = matches
                 else:
                     match = re.search(r'([^.|,]*' + item + '[^.|,]*)', experience_text_for_matching)
@@ -1557,10 +1557,10 @@ def extract_measurable_results(text, experience_list):
                     else:
                         for i in match.groups():
                             if i not in matches[item]:
-                                matches[item].append(i) 
+                                matches[item].append(i)
                     mr_dict[mr] = matches
                 score += get_score(mr_dict[mr]) * percentage
-    
+
     mr_dict['score'] = score
     return mr_dict
 

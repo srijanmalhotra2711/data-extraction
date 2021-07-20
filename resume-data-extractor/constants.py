@@ -3,13 +3,13 @@ NAME_PATTERN      = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
 
 # Education (Upper Case Mandatory)
 EDUCATION         = [
-                    'BE','B.E.', 'B.E','BACHELORS OF ENGINEERING' 'BS', 'B.S', 'ME', 'M.E', 'M.E.', 'M.S', 'BTECH', 'MTECH' 
+                    'BE','B.E.', 'B.E','BACHELORS OF ENGINEERING' 'BS', 'B.S', 'ME', 'M.E', 'M.E.', 'M.S', 'BTECH', 'MTECH'
                     ]
 PRIMARY           = [
                     'SSC', 'HSC', 'CBSE', 'ICSE', 'X', 'XII', 'DIPLOMA'
                     ]
 
-NOT_ALPHA_NUMERIC = r'[^a-zA-Z\d]'
+NOT_ALPHA_NUMERIC = r'[^a-zA-Z\d]' 
 
 NUMBER            = r'\d+'
 
@@ -18,7 +18,7 @@ MONTHS_SHORT      = r'jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec'
 MONTHS_LONG       = r'january|february|march|april|may|june|july|august|september|october|november|december'
 MONTH             = r'' + MONTHS_SHORT + r'|' + MONTHS_LONG
 YEAR              = r'20|19\d{2}'
-DATES             = r'(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9)|(10)|(11)|(12)|(13)|(14)|(15)|(16)|(17)|(18)|(19)|(20)|(21)|(22)|(23)|(24)|(25)|(26)|(27)|(28)|(29)|(30)|(31)'  
+DATES             = r'(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9)|(10)|(11)|(12)|(13)|(14)|(15)|(16)|(17)|(18)|(19)|(20)|(21)|(22)|(23)|(24)|(25)|(26)|(27)|(28)|(29)|(30)|(31)'
 
 STOPWORDS         = set(stopwords.words('english'))
 
@@ -166,7 +166,7 @@ COMPETENCIES = {
         'fix',
         'fixed',
         'correct',
-        'achieve'           
+        'achieve'
     ],
     'leadership': [
         'advise',

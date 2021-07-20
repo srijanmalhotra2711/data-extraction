@@ -15,7 +15,7 @@ class ResumeParser(object):
         self.__companies_file = companies_file
         self.__matcher = Matcher(nlp.vocab)
         self.__details = {
-            'name'              : None,
+            'name'              : None, 
             'full_name'         : None,
             'gender'            : None,
             'maritial_status'   : None,
@@ -74,7 +74,7 @@ class ResumeParser(object):
         pincodes   = utils.extract_pin(self.__nlp, self.__noun_chunks)
         cities     = utils.extract_cities(self.__nlp, self.__noun_chunks)
         experience = utils.extract_experience_exceptional(self.__nlp, self.__noun_chunks)
-        
+
         self.__details['name'] = name
         self.__details['full_name'] = full_name
         self.__details['gender'] = gender
@@ -120,7 +120,7 @@ class ResumeParser(object):
         if len( self.__details['pin'])>1:
             pincodes   = utils.extract_pin_exceptional(self.__nlp, self.__noun_chunks,self.__details['pin'])
             self.__details['pin'] = pincodes
-        
+
         return
 
 def resume_result_wrapper(resume):
