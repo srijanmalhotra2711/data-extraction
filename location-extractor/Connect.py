@@ -7,4 +7,4 @@ mycursor = mydb.cursor()
 mycursor.execute("SELECT * FROM flat_ed_places WHERE key_id=50 ")
 result = mycursor.fetchall()
 for i in result:
-    tokenizer.tokenize(print(i))
+    tokenizer.tokenize(print(i)) 
