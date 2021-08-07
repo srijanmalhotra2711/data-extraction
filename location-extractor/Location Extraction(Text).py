@@ -2,11 +2,11 @@ import nltk
 from nltk.collocations import *
 from nltk import *
 from geotext import GeoText
-from nltk.corpus import stopwords 
+from nltk.corpus import stopwords
 import re
 import io
 #Devides it in tokens
-from nltk.stem import WordNetLemmatizer
+from nltk.stem import WordNetLemmatizer  
 
 bigram_measures = nltk.collocations.BigramAssocMeasures()
 stop_words = set(stopwords.words('english'))
